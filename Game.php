@@ -1,6 +1,7 @@
 <?php
 require_once 'MyPDO.php';
 session_start();
+ini_set("display_errors",true);
 
 if (!isset($_SESSION['account'])) {
     header("location:SignIn.php");
@@ -13,7 +14,7 @@ if ($_SESSION['account'] == 'root') {
 
 function money()
 {
-    session_start();
+//    session_start();
     $myPdo = new MyPDO();
     $pdo = $myPdo->pdoConnect;
     $sql = "SELECT * FROM `accounts` WHERE `name` = :account";
@@ -26,7 +27,7 @@ function money()
 
 function detail()
 {
-    session_start();
+//    session_start();
     $myPdo = new MyPDO();
     $pdo = $myPdo->pdoConnect;
     $sql = "SELECT * FROM `gameResult` WHERE `account` = :account";
@@ -38,6 +39,38 @@ function detail()
 
     return $data;
 }
+
+
+function selectResult()
+{
+    $count = 0;
+    $mypdo = new MyPDO();
+    $pdo = $mypdo->pdoConnect;
+    $sql = "SELECT * FROM `Lottery`";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+//    var_dump($row);
+//    echo json_encode($row);
+//    echo $row[0]['startTime'];
+//    echo $row[0]['stopTime'];
+//    echo date("Y-m-d H:i:s", 1473411399). "<br>"; //start
+//    echo date("Y-m-d H:i:s", 1473411419). "<br>"; //end
+//    echo date("Y-m-d H:i:s", 1473411409). "<br>"; //stop
+//    echo time();
+    for ($i = 0; $i < count($row); $i++) {
+        if (time() > $row[$i]['startTime'] && time() <= $row[$i]['stopTime']) {
+            return $row[$i];
+            $count ++;
+        }
+        if ($count == 0){
+            echo "no game";
+        }
+    }
+
+}
+$data = selectResult();
+//var_dump($data);
 ?>
 <html>
     <head>
@@ -49,11 +82,13 @@ function detail()
         <form action="GameInsert.php" method="post">
             下注金額：<input type="text" size="10" name="pay" value="" />
             <br>
+            期數：<?php echo $data['gameID'];?>
             數字一: <input type="text" size="3" name="one" value="" required pattern="[0-9]{1}"/>
             數字二：<input type="text" size="3" name="two" value="" required pattern="[0-9]{1}"/>
             數字三：<input type="text" size="3" name="three" value="" required pattern="[0-9]{1}"/>
             數字四：<input type="text" size="3" name="four" value="" required pattern="[0-9]{1}"/>
             數字五：<input type="text" size="3" name="five" value="" required pattern="[0-9]{1}"/>
+            <input type="hidden" size="3" name="gameid" value="<?php echo $data['gameID'];?>" required pattern="[0-9]{1}"/>
             <input type="submit" value="確認" />
         </form>
 

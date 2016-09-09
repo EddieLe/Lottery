@@ -44,18 +44,19 @@ function detail()
 <!--            數字四：<input type="text" size="3" name="four" value="--><?php //echo $data[3];?><!--" readonly="readonly" required pattern="[0-9]{1}"/>-->
 <!--            數字五：<input type="text" size="3" name="five" value="--><?php //echo $data[4];?><!--" readonly="readonly" required pattern="[0-9]{1}"/>-->
                 <div class="arrival-info" info=<?php echo $i?>>
-            數字一:  <input id="number_0" type="text" size="3" name="one" value="<?php echo json_decode($data[$i]['number'])[0];?>" required pattern="[0-9]{1}"/>
-            數字二： <input id="number_1" type="text" size="3" name="two" value="<?php echo json_decode($data[$i]['number'])[1];?>" required pattern="[0-9]{1}"/>
-            數字三： <input id="number_2" type="text" size="3" name="three" value="<?php echo json_decode($data[$i]['number'])[2];?>" required pattern="[0-9]{1}"/>
-            數字四： <input id="number_3" type="text" size="3" name="four" value="<?php echo json_decode($data[$i]['number'])[3];?>" required pattern="[0-9]{1}"/>
-            數字五： <input id="number_4" type="text" size="3" name="five" value="<?php echo json_decode($data[$i]['number'])[4];?>" required pattern="[0-9]{1}"/>
+            數字一:  <input id="number_0" disabled="disabled" type="text" size="3" name="one" value="<?php echo json_decode($data[$i]['number'])[0];?>" required pattern="[0-9]{1}"/>
+            數字二： <input id="number_1" disabled="disabled" type="text" size="3" name="two" value="<?php echo json_decode($data[$i]['number'])[1];?>" required pattern="[0-9]{1}"/>
+            數字三： <input id="number_2" disabled="disabled" type="text" size="3" name="three" value="<?php echo json_decode($data[$i]['number'])[2];?>" required pattern="[0-9]{1}"/>
+            數字四： <input id="number_3" disabled="disabled" type="text" size="3" name="four" value="<?php echo json_decode($data[$i]['number'])[3];?>" required pattern="[0-9]{1}"/>
+            數字五： <input id="number_4" disabled="disabled" type="text" size="3" name="five" value="<?php echo json_decode($data[$i]['number'])[4];?>" required pattern="[0-9]{1}"/>
 <!--                    <input type="text" size="3" name="gameid" value="--><?php //echo $i;?><!--" required pattern="[0-9]{1}"/>-->
                     <input type="submit" value="確認" />
                 </div>
         </form>
-        <button id="reload<?php echo $i;?>" name="<?php echo $i;?>" type="" value="開獎" />亂數開獎</button>
-        <script>
 
+        <button id="reload<?php echo $i;?>" name="<?php echo $i;?>" type="" value="開獎" />亂數開獎</button>
+    <?php } ?>
+        <script>
             $(document).ready(function(){
 
                 $('div[info=0] input').attr('disabled', 'disabled');
@@ -79,8 +80,21 @@ function detail()
                     });
                 });
             });
+            function getdata(){
+                $.get("SelectResult.php", function(data){
+                    console.log(data);
+//                alert("Data Loaded: " + data);
+                });
+            }
+            getdata();
+
+
+//            setTimeout("location.reload();",5000);
+
+
+
         </script>
-    <?php } ?>
+
         <a href ="Game.php">上一頁</a>
     </body>
 </html>

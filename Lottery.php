@@ -36,6 +36,7 @@ function doLottery()
             $rand[] = $i;
         }
         shuffle($rand);
+
         $result = array_slice($rand, 0, 5);
         $number = json_encode($result);
 
@@ -46,7 +47,7 @@ function doLottery()
 
         for ($i = 0; $i < count($row); $i++) {
             if ($row[$i]['startTime'] == time()) {
-                echo 123;
+//                echo 123;
                 $sql = "UPDATE `Lottery` SET `number` = :number WHERE `startTime` = :startTime";
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([':number' => $number, ':startTime' => $row[$i]['startTime']]);
