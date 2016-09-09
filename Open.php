@@ -5,22 +5,13 @@ session_start();
 if (!isset($_SESSION['account'])) {
     header("location:SignIn.php");
 }
-//隨機產生不重複亂數
-function result()
-{
-    for ($i = 0; $i < 10; $i++) {
-        $rand[] = $i ;
-    }
-    shuffle($rand);
-    return $rand;
-}
 
 function detail()
 {
     session_start();
     $myPdo = new MyPDO();
     $pdo = $myPdo->pdoConnect;
-    $sql = "SELECT * FROM `gameResult` WHERE `account` = :account";
+    $sql = "SELECT * FROM `Lottery`";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([':account' => $_SESSION['account']]);
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -40,33 +31,29 @@ function detail()
 <!--        <link rel="stylesheet" href="jqueryui/style.css">-->
     </head>
     <body>
-    <?php for ($i = 0; $i < 2; $i++) { ?>
-    <?php $data = result();?>
+    <?php $data = detail();?>
+    <?php for ($i = 0; $i < count($data); $i++) { ?>
+
         <form method="post" action="OpenResultInsert.php">
-            開獎期數：20160908-001 開獎區間 : <input id="datepicker1" type="text" name="start" value="" placeholder="2014-09-18" required/>
-            ～ <input id="datepicker2" type="text" name="end" value="" placeholder="2014-09-18" required/>
-            <script language="JavaScript">
-                $(document).ready(function(){
-                    $("#datepicker1").datepicker();
-                    $("#datepicker2").datepicker({firstDay: 1});
-                });
-            </script>
+            開獎期數：<?php echo $data[$i]['gameID']?> 開獎區間 : <input id="datepicker1" disabled="disabled" type="text" name="start" value="<?php echo date("Y-m-d H:i:s", $data[$i]['startTime'])?>" placeholder="2014-09-18" required/>
+            ～ <input id="datepicker2" disabled="disabled" type="text" name="end" value="<?php echo date("Y-m-d H:i:s", $data[$i]['stopTime'])?>" placeholder="2014-09-18" required/>
+
 <!--            數字一: <input type="text" size="3" name="one" value="--><?php //echo $data[0];?><!--" readonly="readonly" required pattern="[0-9]{1}"/>-->
 <!--            數字二：<input type="text" size="3" name="two" value="--><?php //echo $data[1];?><!--" readonly="readonly" required pattern="[0-9]{1}"/>-->
 <!--            數字三：<input type="text" size="3" name="three" value="--><?php //echo $data[2];?><!--" readonly="readonly" required pattern="[0-9]{1}"/>-->
 <!--            數字四：<input type="text" size="3" name="four" value="--><?php //echo $data[3];?><!--" readonly="readonly" required pattern="[0-9]{1}"/>-->
 <!--            數字五：<input type="text" size="3" name="five" value="--><?php //echo $data[4];?><!--" readonly="readonly" required pattern="[0-9]{1}"/>-->
                 <div class="arrival-info" info=<?php echo $i?>>
-            數字一:  <input id="number_0" type="text" size="3" name="one" value="<?php echo $data[0];?>" required pattern="[0-9]{1}"/>
-            數字二： <input id="number_1" type="text" size="3" name="two" value="<?php echo $data[1];?>" required pattern="[0-9]{1}"/>
-            數字三： <input id="number_2" type="text" size="3" name="three" value="<?php echo $data[2];?>" required pattern="[0-9]{1}"/>
-            數字四： <input id="number_3" type="text" size="3" name="four" value="<?php echo $data[3];?>" required pattern="[0-9]{1}"/>
-            數字五： <input id="number_4" type="text" size="3" name="five" value="<?php echo $data[4];?>" required pattern="[0-9]{1}"/>
-                    <input type="text" size="3" name="gameid" value="<?php echo $i;?>" required pattern="[0-9]{1}"/>
+            數字一:  <input id="number_0" type="text" size="3" name="one" value="<?php echo json_decode($data[$i]['number'])[0];?>" required pattern="[0-9]{1}"/>
+            數字二： <input id="number_1" type="text" size="3" name="two" value="<?php echo json_decode($data[$i]['number'])[1];?>" required pattern="[0-9]{1}"/>
+            數字三： <input id="number_2" type="text" size="3" name="three" value="<?php echo json_decode($data[$i]['number'])[2];?>" required pattern="[0-9]{1}"/>
+            數字四： <input id="number_3" type="text" size="3" name="four" value="<?php echo json_decode($data[$i]['number'])[3];?>" required pattern="[0-9]{1}"/>
+            數字五： <input id="number_4" type="text" size="3" name="five" value="<?php echo json_decode($data[$i]['number'])[4];?>" required pattern="[0-9]{1}"/>
+<!--                    <input type="text" size="3" name="gameid" value="--><?php //echo $i;?><!--" required pattern="[0-9]{1}"/>-->
                     <input type="submit" value="確認" />
                 </div>
         </form>
-        <button id="reload<?php echo $i;?>" name="<?php echo $i;?>" type="" value="開獎" />開獎</button>
+        <button id="reload<?php echo $i;?>" name="<?php echo $i;?>" type="" value="開獎" />亂數開獎</button>
         <script>
 
             $(document).ready(function(){
