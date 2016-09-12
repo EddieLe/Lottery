@@ -60,12 +60,14 @@ function selectResult()
 //    echo time();
     for ($i = 0; $i < count($row); $i++) {
         if (time() > $row[$i]['startTime'] && time() <= $row[$i]['stopTime']) {
+            $new = json_encode($row[$i]);
+            echo $new;
             return $row[$i];
             $count ++;
         }
-        if ($count == 0){
-            echo "no game";
-        }
+    }
+    if ($count == 0 ){
+        echo "no game";
     }
 
 }
@@ -75,6 +77,7 @@ $data = selectResult();
 <html>
     <head>
         <title>Game</title>
+        <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
     </head>
     <body>
         <div>帳號：<?php echo $_SESSION['account'] ?></div>
@@ -82,6 +85,7 @@ $data = selectResult();
         <form action="GameInsert.php" method="post">
             下注金額：<input type="text" size="10" name="pay" value="" />
             <br>
+            <?php echo ($data['stopTime'] - time())?>
             期數：<?php echo $data['gameID'];?>
             數字一: <input type="text" size="3" name="one" value="" required pattern="[0-9]{1}"/>
             數字二：<input type="text" size="3" name="two" value="" required pattern="[0-9]{1}"/>
@@ -125,5 +129,62 @@ $data = selectResult();
         <form action="Bank.php" method="post">
             <input type="submit" value="Bank Page">
         </form>
+
+    <script>
+        function getdata(){
+            $.get("SelectResult.php", function(data){
+                console.log(data);
+                countTime(data);
+//                alert("Data Loaded: " + data);
+            });
+        }
+        getdata();
+
+        function countTime(spantime){
+            var count = 0;
+
+            $(document).ready(function () {
+
+                setInterval(function(){
+                    spantime --;
+                    var d = Math.floor(spantime / (24 * 3600));
+                    var h = Math.floor((spantime % (24*3600))/3600);
+                    var m = Math.floor((spantime % 3600)/(60));
+                    var s = Math.floor(spantime % 60);
+
+                    if(spantime>0){
+                        $("#hour").text(h+(d*24));
+                        $("#min").text(m);
+                        $("#sec").text(s);
+
+                    }else{ // 避免倒數變成負的
+                        spantime = 7;
+                        count ++;
+                        $("#hour").text(0);
+                        $("#min").text(0);
+                        $("#sec").text(7);
+                        $.ajax({
+                            url: "show.php",
+                            type: "GET",
+                            data: {name:"eddie"},
+                            success: function(data){
+                                console.log(data);
+//                                alert(data);
+                            },
+                        })
+                        setTimeout(function(){
+
+                        },5000);
+                    }
+
+                },1000);
+            });
+        }
+
+    </script>
+        還有：
+        <div id="hour"></div>時
+        <div id="min"></div>分
+        <div id="sec"></div>秒
     </body>
 </html>
