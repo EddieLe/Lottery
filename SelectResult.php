@@ -12,11 +12,11 @@ function selectResult()
     $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     for ($i = 0; $i < count($row); $i++) {
+        //STOP TIME開獎 開獎不能下注
         if (time() >= $row[$i]['startTime'] && time() < $row[$i]['stopTime']) {
             $range = $row[$i]['stopTime'] - time();
             $info = [$range, $row[$i]['gameID']];
             $gameRange = json_encode($info);
-//            echo $row[$i]['gameID'];
             echo $gameRange;
             $count ++;
         }

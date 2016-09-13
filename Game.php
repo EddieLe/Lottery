@@ -86,13 +86,15 @@ function selectResult()
             下注金額：<input type="text" size="10" name="pay" value="" />
             <br>
             期數：<div class="number"></div>
+            <div id="lock">
             數字一: <input type="text" size="3" name="one" value="" required pattern="[0-9]{1}"/>
             數字二：<input type="text" size="3" name="two" value="" required pattern="[0-9]{1}"/>
             數字三：<input type="text" size="3" name="three" value="" required pattern="[0-9]{1}"/>
             數字四：<input type="text" size="3" name="four" value="" required pattern="[0-9]{1}"/>
             數字五：<input type="text" size="3" name="five" value="" required pattern="[0-9]{1}"/>
-            <input type="hidden" size="3" name="gameid" value="<?php echo $data['gameID'];?>" required pattern="[0-9]{1}"/>
-            <input type="submit" value="確認" />
+                <input type="hidden" size="3" name="gameid" value="<?php echo $data['gameID'];?>" required pattern="[0-9]{1}"/>
+                <input type="submit" value="確認" />
+            </div>
         </form>
 
         </form>
@@ -147,16 +149,19 @@ function selectResult()
                 var s = Math.floor(spantime % 60);
 
                 if(spantime>=0) {
+                    $("div[id=lock] input").attr('disabled', false);
                     $("#hour").text(h+(d*24));
                     $("#min").text(m);
                     $("#sec").text(s);
                     $(".number").text(number);
 
                 } else { // 避免倒數變成負的
+                    $("div[id=lock] input").attr('disabled', 'disabled');
                     $("#hour").text(0);
                     $("#min").text(0);
                     $("#sec").text(0);
                     $(".number").text("本期結束");
+
                 }
             });
         }
