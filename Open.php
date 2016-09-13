@@ -58,15 +58,17 @@ function detail()
 //                $('div[info=0] input').attr('disabled', 'disabled');
 //                $('div[info=0] input').attr('disabled', false);
 
-                $("#reload<?php echo $i;?>").click(function(){
+                $("button[id^=reload]").click(function(){
+
                     var id = $(this).attr('name');
+                    alert(id);
                     $.ajax({
                         url: "Result.php",
                         success: function(data){
 //                            alert(data);
-                            console.log(data);
+//                            console.log(data);
                             var result = JSON.parse(data);
-                            console.log(result[0]);
+//                            console.log(result[0]);
                             $.each(result, function(key, value){
                                 console.log(key);
                                 if(key < 5) {
@@ -78,20 +80,36 @@ function detail()
                 });
             });
             function getdata(){
-                $.get("SelectResult.php", function(data) {
+                $.get("CurrentTimeSelect.php", function(data) {
+//                    var result = JSON.parse(data);
                     console.log(data);
-                    var id = data % 10;
-//                    alert(id);
-                    if (data != "no game") {
-                        $('div[info=' + id + '] input').attr('disabled', false);
-//                        alert(123);
-                    } else {
-                        $('div[info=' + id + '] input').attr('disabled', 'disabled');
-                    }
-//                alert("Data Loaded: " + data);
+
+                    $.ajax({
+                        url: "CurrentTimeSelect.php",
+                        success: function(data){
+//                            alert(data);
+                            console.log(data);
+//                            if (data == "no game") {
+//                                $('div[info=' + result[5] + '] input').attr('disabled', true);
+
+//                            }
+                            var result = JSON.parse(data);
+                            $.each(result, function(key, value){
+
+                                $('div[info=' + result[5] + '] input').attr('disabled', "disabled");
+
+                                if (data != "no game") {
+                                    $('div[info=' + result[5] + '] input').attr('disabled', false);
+                                    //console.log(key);
+                                    if(key < 5) {
+                                        $('.arrival-info[info=' + result[5] + ']').find('input[id=number_' + key + ']').val(value);
+                                    }
+                                }
+                            });
+                        },
+                    });
                 });
             }
-            getdata();
             setInterval(function() {
                 getdata();
             },1000);

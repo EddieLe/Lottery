@@ -12,12 +12,11 @@ function selectResult()
     $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     for ($i = 0; $i < count($row); $i++) {
-        if (time() > $row[$i]['startTime'] && time() <= $row[$i]['stopTime']) {
+        if (time() >= $row[$i]['startTime'] && time() < $row[$i]['stopTime']) {
             $range = $row[$i]['stopTime'] - time();
             $gameRange = json_encode($range);
             echo $gameRange;
             $count ++;
-            echo $i;
         }
     }
     if ($count == 0 ){

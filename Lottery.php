@@ -8,7 +8,7 @@ function doLottery()
 {
     $startTime = time();
     $totalTime = 20;
-    $restTime =10;
+    $restTime =5;
     $openCount = 3;
 
     $mypdo = new MyPDO();
@@ -32,6 +32,7 @@ function doLottery()
     }
     while (time() >= $startTime || time() < ($startTime + ($startTime+$totalTime*$openCount))) {
 
+        $rand = [];
         for ($i = 0; $i < 10; $i++) {
             $rand[] = $i;
         }
@@ -39,6 +40,7 @@ function doLottery()
 
         $result = array_slice($rand, 0, 5);
         $number = json_encode($result);
+        echo "$number \n";
 
         $sql = "SELECT `startTime` FROM `Lottery`";
         $stmt = $pdo->prepare($sql);
@@ -50,9 +52,11 @@ function doLottery()
 //                echo 123;
                 $sql = "UPDATE `Lottery` SET `number` = :number WHERE `startTime` = :startTime";
                 $stmt = $pdo->prepare($sql);
+                echo "--->$number \n";
                 $stmt->execute([':number' => $number, ':startTime' => $row[$i]['startTime']]);
             }
         }
+        flush();
         sleep($totalTime);
 
     }
