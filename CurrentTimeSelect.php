@@ -22,9 +22,10 @@ function selectCurrentResult()
             echo $gameRange;
         }
     }
-//    if ($count == 0 ){
-//        echo "no game";
-//    }
+    if ($count == 0 ){
+        $gameRange = json_encode("no game");
+        echo $gameRange;
+    }
 
 }
 selectCurrentResult();

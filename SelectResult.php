@@ -14,13 +14,16 @@ function selectResult()
     for ($i = 0; $i < count($row); $i++) {
         if (time() >= $row[$i]['startTime'] && time() < $row[$i]['stopTime']) {
             $range = $row[$i]['stopTime'] - time();
-            $gameRange = json_encode($range);
+            $info = [$range, $row[$i]['gameID']];
+            $gameRange = json_encode($info);
+//            echo $row[$i]['gameID'];
             echo $gameRange;
             $count ++;
         }
     }
     if ($count == 0 ){
-        echo "no game";
+        $gameRange = json_encode("no game");
+        echo $gameRange;
     }
 
 }

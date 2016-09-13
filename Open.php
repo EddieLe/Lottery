@@ -45,8 +45,7 @@ function detail()
             數字三： <input id="number_2" disabled="disabled" type="text" size="3" name="three" value="<?php echo json_decode($data[$i]['number'])[2];?>" required pattern="[0-9]{1}"/>
             數字四： <input id="number_3" disabled="disabled" type="text" size="3" name="four" value="<?php echo json_decode($data[$i]['number'])[3];?>" required pattern="[0-9]{1}"/>
             數字五： <input id="number_4" disabled="disabled" type="text" size="3" name="five" value="<?php echo json_decode($data[$i]['number'])[4];?>" required pattern="[0-9]{1}"/>
-                    <input type="text" size="3" name="gameid" value="<?php echo $i;?>" required pattern="[0-9]{1}"/>
-                    <input type="submit" value="確認" />
+                    <input id="chek" type="submit" value="確認" />
                 </div>
         </form>
 
@@ -55,20 +54,15 @@ function detail()
         <script>
             $(document).ready(function(){
 
-//                $('div[info=0] input').attr('disabled', 'disabled');
-//                $('div[info=0] input').attr('disabled', false);
-
+                $("button[id^=reload]").hide();
+                $("input[id=chek]").hide();
                 $("button[id^=reload]").click(function(){
 
                     var id = $(this).attr('name');
-                    alert(id);
                     $.ajax({
                         url: "Result.php",
                         success: function(data){
-//                            alert(data);
-//                            console.log(data);
                             var result = JSON.parse(data);
-//                            console.log(result[0]);
                             $.each(result, function(key, value){
                                 console.log(key);
                                 if(key < 5) {
@@ -81,31 +75,35 @@ function detail()
             });
             function getdata(){
                 $.get("CurrentTimeSelect.php", function(data) {
-//                    var result = JSON.parse(data);
                     console.log(data);
 
                     $.ajax({
                         url: "CurrentTimeSelect.php",
                         success: function(data){
-//                            alert(data);
-                            console.log(data);
-//                            if (data == "no game") {
-//                                $('div[info=' + result[5] + '] input').attr('disabled', true);
 
-//                            }
                             var result = JSON.parse(data);
-                            $.each(result, function(key, value){
+                            if (result == "no game") {
+//                                alert(1);
+                                $('div[arrival-info]').attr('disabled', 'disabled');
+                                $('button[id=reload' + result[5] + ']').hide();
+                                $('div[info=' + result[5] + '] input[id=chek]').hide();
+                            } else {
+                                $.each(result, function (key, value) {
 
-                                $('div[info=' + result[5] + '] input').attr('disabled', "disabled");
+                                    $('div[info=' + result[5] + '] input').attr('disabled', "disabled");
 
-                                if (data != "no game") {
-                                    $('div[info=' + result[5] + '] input').attr('disabled', false);
-                                    //console.log(key);
-                                    if(key < 5) {
-                                        $('.arrival-info[info=' + result[5] + ']').find('input[id=number_' + key + ']').val(value);
+                                    if (data != "no game") {
+                                        $('div[info=' + result[5] + '] input').attr('disabled', false);
+                                        $('button[id=reload' + result[5] + ']').show();
+                                        $('div[info=' + result[5] + '] input[id=chek]').show();
+
+                                        if (key < 5) {
+                                            $('.arrival-info[info=' + result[5] + ']').find('input[id=number_' + key + ']').val(value);
+                                        }
                                     }
-                                }
-                            });
+
+                                });
+                            }
                         },
                     });
                 });
@@ -113,9 +111,6 @@ function detail()
             setInterval(function() {
                 getdata();
             },1000);
-
-            //            setTimeout("location.reload();",5000);
-
 
 
         </script>

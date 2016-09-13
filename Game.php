@@ -71,7 +71,7 @@ function selectResult()
     }
 
 }
-$data = selectResult();
+//$data = selectResult();
 //var_dump($data);
 ?>
 <html>
@@ -85,8 +85,7 @@ $data = selectResult();
         <form action="GameInsert.php" method="post">
             下注金額：<input type="text" size="10" name="pay" value="" />
             <br>
-            <?php echo ($data['stopTime'] - time())?>
-            期數：<?php echo $data['gameID'];?>
+            期數：<div class="number"></div>
             數字一: <input type="text" size="3" name="one" value="" required pattern="[0-9]{1}"/>
             數字二：<input type="text" size="3" name="two" value="" required pattern="[0-9]{1}"/>
             數字三：<input type="text" size="3" name="three" value="" required pattern="[0-9]{1}"/>
@@ -133,53 +132,40 @@ $data = selectResult();
     <script>
         function getdata(){
             $.get("SelectResult.php", function(data){
+
                 console.log(data);
-                countTime(data);
-//                alert("Data Loaded: " + data);
+                result =JSON.parse(data);
+                var spantime = result[0];
+                var number = result[1];
+                if(result == "no game") {
+                    $(".number").text("中場休息");
+                }
+                spantime --;
+                var d = Math.floor(spantime / (24 * 3600));
+                var h = Math.floor((spantime % (24*3600))/3600);
+                var m = Math.floor((spantime % 3600)/(60));
+                var s = Math.floor(spantime % 60);
+
+                if(spantime>=0) {
+                    $("#hour").text(h+(d*24));
+                    $("#min").text(m);
+                    $("#sec").text(s);
+                    $(".number").text(number);
+
+                } else { // 避免倒數變成負的
+                    $("#hour").text(0);
+                    $("#min").text(0);
+                    $("#sec").text(0);
+                    $(".number").text("本期結束");
+                }
             });
         }
-        getdata();
+        $(document).ready(function () {
 
-        function countTime(spantime){
-            var count = 0;
-
-            $(document).ready(function () {
-
-                setInterval(function(){
-                    spantime --;
-                    var d = Math.floor(spantime / (24 * 3600));
-                    var h = Math.floor((spantime % (24*3600))/3600);
-                    var m = Math.floor((spantime % 3600)/(60));
-                    var s = Math.floor(spantime % 60);
-
-                    if(spantime>0){
-                        $("#hour").text(h+(d*24));
-                        $("#min").text(m);
-                        $("#sec").text(s);
-
-                    }else{ // 避免倒數變成負的
-                        spantime = 7;
-                        count ++;
-                        $("#hour").text(0);
-                        $("#min").text(0);
-                        $("#sec").text(7);
-                        $.ajax({
-                            url: "show.php",
-                            type: "GET",
-                            data: {name:"eddie"},
-                            success: function(data){
-                                console.log(data);
-//                                alert(data);
-                            },
-                        })
-                        setTimeout(function(){
-
-                        },5000);
-                    }
-
-                },1000);
-            });
-        }
+            setInterval(function(){
+                getdata();
+            },1000);
+        });
 
     </script>
         還有：
