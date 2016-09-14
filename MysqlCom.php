@@ -20,12 +20,12 @@ function comparison()
 
         } else {
             echo "<script> alert('密罵錯誤');</script>";
-            header("refresh:0, url=SignIn.php");
+            header("refresh:0, url=LogIn.php");
             exit;
         }
     } else {
         echo "<script> alert('沒有此帳號');</script>";
-        header("refresh:0, url=SignIn.php");
+        header("refresh:0, url=LogIn.php");
     }
 }
 comparison();

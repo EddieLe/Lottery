@@ -16,7 +16,7 @@ function create()
     $stmt->execute([':account' => $_POST['account']]);
     if ($stmt->rowCount() > 0) {
         echo "<script> alert('帳號重複');</script>";
-        header("refresh:0, url=index.php");
+        header("refresh:0, url=LogIn.php");
         exit;
     }
     $sql = "INSERT INTO `accounts`(`name`, `password`) VALUES (:account, :password)";

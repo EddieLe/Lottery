@@ -82,11 +82,11 @@ function detail()
                         success: function(data){
 
                             var result = JSON.parse(data);
+
                             if (result == "no game") {
-//                                alert(1);
-                                $('div[arrival-info]').attr('disabled', 'disabled');
-                                $('button[id=reload' + result[5] + ']').hide();
-                                $('div[info=' + result[5] + '] input[id=chek]').hide();
+                                $('div[class=arrival-info]').attr('disabled', 'disabled');
+                                $('button[id=reload]').hide();
+                                $('div[info] input[id=chek]').hide();
                             } else {
                                 $.each(result, function (key, value) {
 
