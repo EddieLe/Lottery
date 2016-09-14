@@ -4,6 +4,7 @@ session_start();
 
 if (isset($_GET['pay'])) {
     moneyAction();
+    exit;
 }
 
 function moneyAction()

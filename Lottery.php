@@ -1,5 +1,6 @@
 <?php
 require_once 'MyPDO.php';
+require_once 'OpenResultInsert.php';
 ini_set("display_errors",true);
 ignore_user_abort(true);
 set_time_limit(0);
@@ -39,7 +40,7 @@ function doLottery()
         for ($i = 0; $i < 10; $i++) {
             $rand[] = $i;
         }
-        shuffle($rand);
+//        shuffle($rand);
 
         $result = array_slice($rand, 0, 5);
         $number = json_encode($result);
@@ -56,6 +57,13 @@ function doLottery()
                 $stmt = $pdo->prepare($sql);
                 echo "--->$number \n";
                 $stmt->execute([':number' => $number, ':stopTime' => $row[$i]['stopTime']]);
+
+                $sql = "SELECT * FROM `Lottery` WHERE `stopTime` = :stopTime";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([':stopTime' => $row[$i]['stopTime']]);
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                comparison($row);
             }
         }
         flush();

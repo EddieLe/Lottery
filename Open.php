@@ -3,7 +3,7 @@ require_once 'MyPDO.php';
 session_start();
 
 if (!isset($_SESSION['account'])) {
-    header("location:SignIn.php");
+    header("location:LogIn.php");
 }
 
 function detail()
@@ -34,11 +34,6 @@ function detail()
             開獎期數：<?php echo $data[$i]['gameID']?> 開獎區間 : <input id="datepicker1" disabled="disabled" type="text" name="start" value="<?php echo date("Y-m-d H:i:s", $data[$i]['startTime'])?>" placeholder="2014-09-18" required/>
             ～ <input id="datepicker2" disabled="disabled" type="text" name="end" value="<?php echo date("Y-m-d H:i:s", $data[$i]['stopTime'])?>" placeholder="2014-09-18" required/>
 
-<!--            數字一: <input type="text" size="3" name="one" value="--><?php //echo $data[0];?><!--" readonly="readonly" required pattern="[0-9]{1}"/>-->
-<!--            數字二：<input type="text" size="3" name="two" value="--><?php //echo $data[1];?><!--" readonly="readonly" required pattern="[0-9]{1}"/>-->
-<!--            數字三：<input type="text" size="3" name="three" value="--><?php //echo $data[2];?><!--" readonly="readonly" required pattern="[0-9]{1}"/>-->
-<!--            數字四：<input type="text" size="3" name="four" value="--><?php //echo $data[3];?><!--" readonly="readonly" required pattern="[0-9]{1}"/>-->
-<!--            數字五：<input type="text" size="3" name="five" value="--><?php //echo $data[4];?><!--" readonly="readonly" required pattern="[0-9]{1}"/>-->
                 <div class="arrival-info" info=<?php echo $i?>>
             數字一:  <input id="number_0" disabled="disabled" type="text" size="3" name="one" value="<?php echo json_decode($data[$i]['number'])[0];?>" required pattern="[0-9]{1}"/>
             數字二： <input id="number_1" disabled="disabled" type="text" size="3" name="two" value="<?php echo json_decode($data[$i]['number'])[1];?>" required pattern="[0-9]{1}"/>

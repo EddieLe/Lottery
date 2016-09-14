@@ -9,23 +9,61 @@ if (!isset($_SESSION['account'])) {
 
 function back($pay, $account)
 {
-    //贏錢api
-    $url = "192.168.62.129/api/MoneyWin.php";
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query( array( "account" => $account, "pay" => $pay) ));
-    curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
-    $temp = curl_exec($ch);
-    curl_close($ch);
-    echo $temp;
+    try {
+        $myPdo = new MyPDO();
+        $pdo = $myPdo->pdoConnect;
+        $pdo->beginTransaction();
+
+        $cmd = "SELECT `count` FROM `accounts` WHERE `name` = :account FOR UPDATE";
+        $stmt = $pdo->prepare($cmd);
+        $stmt->execute([':account' => $account]);
+
+        $row = $stmt->fetchall(PDO::FETCH_ASSOC);
+        $newTotal = $row[0]['count'];
+
+        $cmd = "UPDATE `accounts` SET `count` = `count` + :win WHERE `name` = :name";
+        $stmt = $pdo->prepare($cmd);
+        $stmt->execute([':win' => $pay, ':name' => $account]);
+
+        $cmd = "INSERT INTO `detail`(`name`, `total`, `result`, `win`) VALUES (:account, :total, :result, :win)";
+        $stmt = $pdo->prepare($cmd);
+        $stmt->execute([
+            ':total' => $newTotal,
+            ':account' => $account,
+            ':result' => $newTotal + $pay,
+            ':win' => $pay
+        ]);
+
+        $pdo->commit();
+
+    } catch (Exception $e) {
+        $pdo->rollback();
+        echo 'Caught exception: ', $e->getMessage();
+    }
 }
 
 function comparison($array)
 {
-    $myPdo = new MyPDO();
-    $pdo = $myPdo->pdoConnect;
+//    $s = explode("/", $_POST['start']);
+//    $e = explode("/", $_POST['end']);
+//    $_POST['start'] = $s[2] . "-" . $s[0] . "-" . $s[1];
+//    $_POST['end'] = $e[2] . "-" . $e[0] . "-" . $e[1];
+//
+//    $myPdo = new MyPDO();
+//    $pdo = $myPdo->pdoConnect;
+//    $sql = "INSERT INTO `Result`(`one`, `two`, `three`, `four`, `five`,`starttime`, `endtime`)
+//      VALUES (:one, :two, :three, :four, :five, :starttime, :endtime)";
+//    $stmt = $pdo->prepare($sql);
+//    $stmt->execute([':one' => $_POST['one'],
+//        ':two' => $_POST['two'],
+//        ':three' => $_POST['three'],
+//        ':four' => $_POST['four'],
+//        ':five' => $_POST['five'],
+//        ':starttime' => $_POST['start'],
+//        ':endtime' => $_POST['end']
+//    ]);
+//    //找出最後一筆開獎好寫入明細
+//    $number = $pdo->lastInsertId();
 
     $sql = "SELECT * FROM `gameResult`";
     $stmt = $pdo->prepare($sql);
@@ -38,14 +76,14 @@ function comparison($array)
     for ($i = 0; $i < count($data); $i++) {
         $time[] = strtotime($data[$i]['date']);
 
-        if ($time[$i] >= $array['startTime']  &&  $time[$i] < $array['stopTime']) {
+        if ($time[$i] >= strtotime($_POST['start'])  &&  $time[$i] <= (strtotime($_POST['end'])+86399)) {
             $result[] = $data[$i];
         }
     }
-    $number = json_decode($array['number']);
-    $oneResult = array($number[0], $number[1], $number[2]);
-    $twoResult = array($number[1], $number[2], $number[3]);
-    $threeResult = array($number[2], $number[3], $number[4]);
+
+    $oneResult = array($_POST['one'], $_POST['two'], $_POST['three']);
+    $twoResult = array($_POST['two'], $_POST['three'], $_POST['four']);
+    $threeResult = array($_POST['three'], $_POST['four'], $_POST['five']);
 
     for ($i = 0; $i < count($result); $i++) {
         //先寫入有判斷區間開獎值
@@ -54,7 +92,7 @@ function comparison($array)
         $stmt->execute(['id' => $result[$i]['id']]);
 
         //判斷由沒有全部一致
-        if ($result[$i]['one'] == $number[0] && $result[$i]['two'] == $number[1] && $result[$i]['three'] == $number[2]) {
+        if ($result[$i]['one'] == $_POST['one'] && $result[$i]['two'] == $_POST['two'] && $result[$i]['three'] == $_POST['three']) {
             $sql = "UPDATE `gameResult` SET `result`= '中前三全中', `number` = :numbers WHERE `id` = :id";
             $stmt = $pdo->prepare($sql);
             $stmt->execute(['id' => $result[$i]['id'], ':numbers' => $number]);
@@ -69,7 +107,7 @@ function comparison($array)
 
         }
 
-        if ($result[$i]['two'] == $number[1] && $result[$i]['three'] == $number[2] && $result[$i]['four'] == $number[3]) {
+        if ($result[$i]['two'] == $_POST['two'] && $result[$i]['three'] == $_POST['three'] && $result[$i]['four'] == $_POST['four']) {
             $sql = "UPDATE `gameResult` SET `result1`= '中中三全中', `number` = :numbers WHERE `id` = :id";
             $stmt = $pdo->prepare($sql);
             $stmt->execute(['id' => $result[$i]['id'], ':numbers' => $number]);
@@ -82,7 +120,7 @@ function comparison($array)
 
         }
 
-        if ($result[$i]['three'] == $number[2] && $result[$i]['four'] == $number[3] && $result[$i]['five'] == $number[4]) {
+        if ($result[$i]['three'] == $_POST['three'] && $result[$i]['four'] == $_POST['four'] && $result[$i]['five'] == $_POST['five']) {
             $sql = "UPDATE `gameResult` SET `result2`= '中後三全中', `number` = :numbers WHERE `id` = :id";
             $stmt = $pdo->prepare($sql);
             $stmt->execute(['id' => $result[$i]['id'], ':numbers' => $number]);
@@ -96,14 +134,14 @@ function comparison($array)
         }
     }
     //撈出有中獎明細
-//    $sql = "SELECT * FROM `gameResult` WHERE `number` > 0";
-//    $stmt = $pdo->prepare($sql);
-//    $stmt->execute([':account' => $_SESSION['account']]);
-//    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-//        $dit[] = $row;
-//    }
-//
-//    return $dit;
+    $sql = "SELECT * FROM `gameResult` WHERE `number` > 0";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([':account' => $_SESSION['account']]);
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $dit[] = $row;
+    }
+
+    return $dit;
 }
 
 ?>

@@ -2,15 +2,15 @@
 require_once 'MyPDO.php';
 session_start();
 
-if (isset($_GET['pay']) && isset($_GET['account'])) {
+if (isset($_POST['pay']) && isset($_POST['account'])) {
     back();
     exit;
 }
 
 function back()
 {
-    $pay = $_GET['pay'];
-    $account = $_GET['account'];
+    $pay = $_POST['pay'];
+    $account = $_POST['account'];
 
     try {
         $myPdo = new MyPDO();

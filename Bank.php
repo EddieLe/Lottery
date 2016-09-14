@@ -40,7 +40,7 @@ function logout()
 
 if (isset($_POST['logout'])) {
     logout();
-    header("location:SignIn.php");
+    header("location:LogIn.php");
 }
 ?>
 <!DOCTYPE html>
@@ -63,11 +63,6 @@ if (isset($_POST['logout'])) {
     <link rel="stylesheet" href="assets/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <!--<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>-->
-    <!--<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>-->
     <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
     <![endif]-->
 
@@ -126,7 +121,7 @@ if (isset($_POST['logout'])) {
                         <input id="btn-style" type="submit" name="open" value="開獎頁">
                     </form>
                 <?php } else {?>
-                <table Width="250px">
+                <table width="250px">
                     <tr>
                         <td>
                             <form action="" method="post">
@@ -172,56 +167,3 @@ if (isset($_POST['logout'])) {
         </div>
     </div>
 </body>
-
-
-<!--<html>-->
-<!--    <head>-->
-<!--        <title>Bank</title>-->
-<!--    </head>-->
-<!--    <body>-->
-<!--    <div>帳號：--><?php //echo $_SESSION['account'] ?><!--</div>-->
-<!--    <div>目前餘額：--><?php //money(); ?><!--</div>-->
-<!--        <form action="MysqlTrs.php" method="post">-->
-<!--            轉帳選擇: <select name="trs">-->
-<!--                        　<option value="in">轉入</option>-->
-<!--                        　<option value="out">轉出</option>-->
-<!--                    </select>-->
-<!--            輸入金額: <input type="text" name="money" value="" />-->
-<!--            <input type="submit" value="確認" />-->
-<!--        </form>-->
-<!--    --><?php //if ($_SESSION['account'] == 'root') {?>
-<!--        <form action="Open.php" method="post">-->
-<!--            <input type="submit" name="open" value="開獎頁">-->
-<!--        </form>-->
-<!--    --><?php //} else {?>
-<!--        <form action="Game.php" method="post">-->
-<!--            <input type="submit" name="logout" value="三字遊戲" />-->
-<!--        </form>-->
-<!--    --><?php //} ?>
-<!--        <form action="" method="post">-->
-<!--            <input type="submit" name="logout" value="登出" />-->
-<!--        </form>-->
-<!--    <table width="300" border="1">-->
-<!--        <tr>-->
-<!--            <th>金額</th>-->
-<!--            <th>提款</th>-->
-<!--            <th>存款</th>-->
-<!--            <th>下注</th>-->
-<!--            <th>贏額</th>-->
-<!--            <th>餘額</th>-->
-<!--        </tr>-->
-<!--        --><?php //$data = detail();?>
-<!--        --><?php //for ($i = 0; $i < count($data); $i++): ?>
-<!--            <tr>-->
-<!--                <th>--><?php //echo $data[$i]['total'] ?><!--</th>-->
-<!--                <th>--><?php //echo $data[$i]['take'] ?><!--</th>-->
-<!--                <th>--><?php //echo $data[$i]['save'] ?><!--</th>-->
-<!--                <th>--><?php //echo $data[$i]['play'] ?><!--</th>-->
-<!--                <th>--><?php //echo $data[$i]['win'] ?><!--</th>-->
-<!--                <th>--><?php //echo $data[$i]['result'] ?><!--</th>-->
-<!--            </tr>-->
-<!--        --><?php //endfor; ?>
-<!--    </table>-->
-<!---->
-<!--    </body>-->
-<!--</html>-->

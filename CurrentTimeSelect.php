@@ -17,6 +17,7 @@ function selectCurrentResult()
             $number = json_decode($row[$i]['number']);
             $openCurrent = [$number[0], $number[1], $number[2], $number[3], $number[4], $i];
             $gameRange = json_encode($openCurrent);
+            $count ++;
             echo $gameRange;
         }
     }

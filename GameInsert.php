@@ -29,8 +29,8 @@ function gameInsert()
         header("refresh:0, url=Game.php");
         exit;
     }
-
-    $url = "http://localhost/api/MoneyAction.php?pay=" . $_POST['pay'];
+    //扣款api
+    $url = "http://192.168.62.129/api/MoneyAction.php?pay=" . $_POST['pay'];
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_HEADER, false);
@@ -40,8 +40,17 @@ function gameInsert()
     $temp = curl_exec($ch);
     curl_close($ch);
 
-    $sql = "INSERT INTO `gameResult`(`one`, `two`, `three`, `four`, `five`, `pay`, `result`, `account`, `result1`, `result2`, `number`) 
-      VALUES (:one, :two, :three, :four, :five, :pay, '無', :account, '無', '無', '未開獎')";
+    $time = time();
+    $sql = "SELECT `gameID` FROM `Lottery` WHERE `startTime` <= :time AND `stopTime` > :time ";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([':time' => $time]);
+    $row = $stmt->fetch();
+//    var_dump($row);
+//    echo $row['gameID'];
+//    exit;
+
+    $sql = "INSERT INTO `gameResult`(`one`, `two`, `three`, `four`, `five`, `pay`, `result`, `account`, `result1`, `result2`, `number`, `gameID`) 
+      VALUES (:one, :two, :three, :four, :five, :pay, '無', :account, '無', '無', '未開獎', :gameID)";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([':one' => $_POST['one'],
         ':two' => $_POST['two'],
@@ -49,7 +58,8 @@ function gameInsert()
         ':four' => $_POST['four'],
         ':five' => $_POST['five'],
         ':pay' => $_POST['pay'],
-        ':account' => $_SESSION['account']
+        ':account' => $_SESSION['account'],
+        ':gameID'=> $row['gameID']
         ]);
     if ($temp != "failed") {
         echo "<script> alert('下注成功'); </script>";
