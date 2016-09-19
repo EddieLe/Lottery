@@ -41,6 +41,7 @@ create table gameResult
     date timestamp
 ) engine = InnoDB;
 
+//不需要 Result
 create table Result
 (
     id int auto_increment primary key,
@@ -62,5 +63,6 @@ create table Lottery
     startTime int null,
     stopTime int null,
     endTime int null,
+    flag int null,
     date timestamp
 ) engine = InnoDB;

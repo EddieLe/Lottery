@@ -11,18 +11,19 @@ if ($_SESSION['account'] == 'root') {
     header("location:Bank.php");
     exit;
 }
-
 function money()
 {
-//    session_start();
-    $myPdo = new MyPDO();
-    $pdo = $myPdo->pdoConnect;
-    $sql = "SELECT * FROM `accounts` WHERE `name` = :account";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([':account' => $_SESSION['account']]);
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    echo $row['count'];
+    //餘額api
+    $url = "192.168.62.129/api/MoneyTotal.php";
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query( array( "account" => $_SESSION['account']) ));
+    curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+    $temp = curl_exec($ch);
+    curl_close($ch);
+    echo $temp;
 }
 
 function detail()
