@@ -8,7 +8,7 @@ set_time_limit(0);
 function doLottery()
 {
     $totalTime = 20;
-    $restTime =5;
+    $restTime =10;
     $openCount = 3;
     $count = 0;
 
@@ -32,7 +32,9 @@ function doLottery()
 
     }
     //第一次下注時間
-    sleep($totalTime-$restTime);
+//    sleep($totalTime-$restTime);
+    //結束前一秒開獎
+    sleep($totalTime - 1);
 
     while ($count < $openCount) {
         $count ++;
@@ -40,30 +42,52 @@ function doLottery()
         for ($i = 0; $i < 10; $i++) {
             $rand[] = $i;
         }
-//        shuffle($rand);
+        shuffle($rand);
 
         $result = array_slice($rand, 0, 5);
         $number = json_encode($result);
         echo "$number \n";
 
-        $sql = "SELECT `stopTime` FROM `Lottery`";
+//        $sql = "SELECT `stopTime` FROM `Lottery`";
+//        $stmt = $pdo->prepare($sql);
+//        $stmt->execute();
+//        $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+//
+//        for ($i = 0; $i < count($row); $i++) {
+//            if ($row[$i]['stopTime'] == time()) {
+//                $sql = "UPDATE `Lottery` SET `number` = :number WHERE `stopTime` = :stopTime";
+//                $stmt = $pdo->prepare($sql);
+//                echo "--->$number \n";
+//                $stmt->execute([':number' => $number, ':stopTime' => $row[$i]['stopTime']]);
+//
+//                $sql = "SELECT * FROM `Lottery` WHERE `stopTime` = :stopTime";
+//                $stmt = $pdo->prepare($sql);
+//                $stmt->execute([':stopTime' => $row[$i]['stopTime']]);
+//                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+//                //執行比對
+//                comparison($row);
+//            }
+//        }
+        $sql = "SELECT `endTime`, `flag` FROM `Lottery`";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
         $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         for ($i = 0; $i < count($row); $i++) {
-            if ($row[$i]['stopTime'] == time()) {
-                $sql = "UPDATE `Lottery` SET `number` = :number WHERE `stopTime` = :stopTime";
-                $stmt = $pdo->prepare($sql);
-                echo "--->$number \n";
-                $stmt->execute([':number' => $number, ':stopTime' => $row[$i]['stopTime']]);
+            if ($row[$i]['endTime'] - 1 == time()) {
+                if ($row[$i]['flag'] == 0) {
+                    $sql = "UPDATE `Lottery` SET `number` = :number WHERE `endTime` = :endTime";
+                    $stmt = $pdo->prepare($sql);
+                    echo "--->$number \n";
+                    $stmt->execute([':number' => $number, ':endTime' => $row[$i]['endTime']]);
 
-                $sql = "SELECT * FROM `Lottery` WHERE `stopTime` = :stopTime";
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute([':stopTime' => $row[$i]['stopTime']]);
-                $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                comparison($row);
+                    $sql = "SELECT * FROM `Lottery` WHERE `endTime` = :endTime";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute([':endTime' => $row[$i]['endTime']]);
+                    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                    //執行比對
+                    comparison($row);
+                }
             }
         }
         flush();
