@@ -45,9 +45,6 @@ function gameInsert()
     $stmt = $pdo->prepare($sql);
     $stmt->execute([':time' => $time]);
     $row = $stmt->fetch();
-//    var_dump($row);
-//    echo $row['gameID'];
-//    exit;
 
     $sql = "INSERT INTO `gameResult`(`one`, `two`, `three`, `four`, `five`, `pay`, `result`, `account`, `result1`, `result2`, `number`, `gameID`) 
       VALUES (:one, :two, :three, :four, :five, :pay, '無', :account, '無', '無', '未開獎', :gameID)";

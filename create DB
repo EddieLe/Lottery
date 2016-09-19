@@ -26,6 +26,7 @@ create table detail
 create table gameResult
 (
     id int auto_increment primary key,
+    gameID char(100) null,
     one int null,
     two int null,
     three int null,

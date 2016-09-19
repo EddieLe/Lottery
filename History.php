@@ -19,9 +19,9 @@ function detail()
 {
     $myPdo = new MyPDO();
     $pdo = $myPdo->pdoConnect;
-    $sql = "SELECT * FROM `Result` WHERE `id` = :id";
+    $sql = "SELECT * FROM `Lottery` WHERE `gameID` = :gameID";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute([':id' => $_POST['id']]);
+    $stmt->execute([':gameID' => $_POST['gameID']]);
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $detail[] = $row;
     }
@@ -100,7 +100,7 @@ function detail()
                         <thead>
                         <tr>
                             <th>注單編號</th>
-                            <th>開獎期數</th>
+                            <th>開獎狀態</th>
                             <th>中獎人</th>
                             <th>數字一</th>
                             <th>數字二</th>
@@ -114,7 +114,7 @@ function detail()
                         <?php $data = history();?>
                         <?php for ($i = 0; $i < count($data); $i++) :?>
                             <tr>
-                                <td><?php echo $data[$i]['id']; ?></td>
+                                <td><?php echo $data[$i]['gameID']; ?></td>
                                 <td><?php echo $data[$i]['number']; ?></td>
                                 <td><?php echo $data[$i]['account']; ?></td>
                                 <td><?php echo $data[$i]['one']; ?></td>
@@ -131,12 +131,12 @@ function detail()
                         <?php endfor; ?>
                     </table>
                     <form method="post" action="">
-                        開獎期數：<input type="text" name="id" value="">
+                        注單編號：<input type="text" name="gameID" value="">
                         <input type="submit" name="sub" value="查詢">
                         <div class="bs-example">
                             <table class="table">
                             <tr>
-                                <td>開獎期數</td>
+                                <td>注單編號</td>
                                 <td>數字一</td>
                                 <td>數字二</td>
                                 <td>數字三</td>
@@ -147,12 +147,12 @@ function detail()
                             <?php $data = detail();?>
                             <?php for ($i = 0; $i < count($data); $i++) :?>
                                 <tr>
-                                    <td><?php echo $data[$i]['id']; ?></td>
-                                    <td><?php echo $data[$i]['one']; ?></td>
-                                    <td><?php echo $data[$i]['two']; ?></td>
-                                    <td><?php echo $data[$i]['three']; ?></td>
-                                    <td><?php echo $data[$i]['four']; ?></td>
-                                    <td><?php echo $data[$i]['five']; ?></td>
+                                    <td><?php echo $data[$i]['gameID']; ?></td>
+                                    <td><?php echo json_decode($data[$i]['number'])[0]; ?></td>
+                                    <td><?php echo json_decode($data[$i]['number'])[1]; ?></td>
+                                    <td><?php echo json_decode($data[$i]['number'])[2]; ?></td>
+                                    <td><?php echo json_decode($data[$i]['number'])[3]; ?></td>
+                                    <td><?php echo json_decode($data[$i]['number'])[4]; ?></td>
                                     <td><?php echo $data[$i]['date']; ?></td>
                                 </tr>
                             <?php endfor; ?>
